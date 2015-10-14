@@ -3,14 +3,13 @@ var jackrabbit  = require('jackrabbit');
 var logger      = require('logfmt');
 var User        = require('../api/models/users-model').User;
 
-var RABBIT_URL    = process.env.CLOUDAMQP_URL || 'amqp://ltucfmay:b5Xali0L8dttXKnJlsOyO3MyiuRm0AlN@owl.rmq.cloudamqp.com/ltucfmay';
+module.exports.start = function(rabbit_url, mongo_url) {
 
+  logger.log({ type: 'info', message: 'STARTING USERS SERVICE' });
 
-module.exports.start = function() {
+  mongoose.connect(mongo_url);
 
-  logger.log({ type: 'info', message: 'starting USERS service' });
-
-  var rabbit      = jackrabbit(RABBIT_URL, 1);
+  var rabbit      = jackrabbit(rabbit_url);
   var exchange    = rabbit.default();
   var userAdd     = exchange.queue({ name: 'api.post.user', prefetch: 1, durable: false });
   var userUpdate  = exchange.queue({ name: 'api.put.user', prefetch: 1, durable: false });

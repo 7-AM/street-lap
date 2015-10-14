@@ -1,11 +1,8 @@
 var express     = require('express');
-var mongoose    = require('mongoose');
 var logger      = require('morgan');
 var bodyParser  = require('body-parser');
 
 module.exports = function(exchange, serviceTime){
-
-  mongoose.connect('mongodb://127.0.0.1:27017/streelap');
 
   var app     = express();
 
