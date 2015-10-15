@@ -2,11 +2,11 @@ var express     = require('express');
 var logger      = require('morgan');
 var bodyParser  = require('body-parser');
 
-module.exports = function(exchange, serviceTime){
+module.exports = function(exchange, serviceTime) {
 
   var app     = express();
 
-  var routes  = require('./routers/users-route');
+  var routes  = require('./routers/user');
 
   var allowCrossDomain = function(req, res, next) {
       res.header('Access-Control-Allow-Origin', '*');
@@ -20,7 +20,6 @@ module.exports = function(exchange, serviceTime){
         next();
       }
   };
-
 
   app.use(bodyParser.json());
   app.use(logger('dev'));

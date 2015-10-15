@@ -1,7 +1,7 @@
 var mongoose    = require('mongoose');
 var jackrabbit  = require('jackrabbit');
 var logger      = require('logfmt');
-var User        = require('../api/models/users-model').User;
+var User        = require('../api/models/user').User;
 
 module.exports.start = function(rabbit_url, mongo_url) {
 
@@ -11,19 +11,27 @@ module.exports.start = function(rabbit_url, mongo_url) {
 
   var rabbit      = jackrabbit(rabbit_url);
   var exchange    = rabbit.default();
+
   var userAdd     = exchange.queue({ name: 'api.post.user', prefetch: 1, durable: false });
   var userUpdate  = exchange.queue({ name: 'api.put.user', prefetch: 1, durable: false });
   var userDelete  = exchange.queue({ name: 'api.delete.user', prefetch: 1, durable: false });
   var userById    = exchange.queue({ name: 'api.get.user.id', prefetch: 1, durable: false });
   var userAll     = exchange.queue({ name: 'api.get.user', prefetch: 1, durable: false });
 
-  userAdd.consume(add);
-  userUpdate.consume(update);
-  userById.consume(getSingleUser);
-  userAll.consume(getAllUsers);
-  userDelete.consume(deleteUser);
+  rabbit.once('connected', listen);
+  rabbit.once('disconnected', exit.bind(this, 'disconnected'));
 
-  process.once('uncaughtException', onError);
+  process.once('uncaughtException', exit);
+
+  function listen() {
+    logger.log({ type: 'info', message: 'Service connected to message queue' });
+
+    userAdd.consume(add);
+    userUpdate.consume(update);
+    userById.consume(getSingleUser);
+    userAll.consume(getAllUsers);
+    userDelete.consume(deleteUser);
+  }
 
   function add(data, reply) {
     logger.log({ type: 'info', message: 'service adding user' });
@@ -97,7 +105,8 @@ module.exports.start = function(rabbit_url, mongo_url) {
 	  });
   }
 
-  function onError(err) {
+  function exit(err) {
+
     logger.log({ type: 'error', service: 'users', error: err, stack: err.stack || 'No stacktrace' }, process.stderr);
     logger.log({ type: 'info', message: 'killing users service' });
 

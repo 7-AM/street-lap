@@ -5,8 +5,8 @@ var cpus        = require('os').cpus().length;
 var logger      = require('logfmt');
 var jackrabbit  = require('jackrabbit');
 
-var api         = require('./api/server-api');
-var service     = require('./services/users-service');
+var api         = require('./api/api');
+var service     = require('./services/user');
 
 dotenv.load();
 
@@ -17,7 +17,7 @@ var PORT          = process.env.SERVICE_USER_PORT   || 3000;
 var SERVICE_TIME  = process.env.SERVICE_TIME        || 500;
 var MONGO_URL     = process.env.MONGO_URL           || '';
 
-throng(start, { workers: cpus, lifetime: Infinity });
+throng(start, { workers: 1, lifetime: Infinity });
 
 function start() {
   logger.log({ type: 'info', message: 'starting server' });
