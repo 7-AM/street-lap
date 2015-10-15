@@ -4,7 +4,7 @@
   "description": "",
   "main": "",
   "scripts": {
-    "start": "node ./users/user-server.js"
+    "start": "node ./users/server.js"
   },
   "author": "Alfredo Monteiro",
   "license": "ISC",
