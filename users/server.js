@@ -8,6 +8,7 @@ var jackrabbit  = require('jackrabbit');
 var api         = require('./api/api');
 var service     = require('./services/user');
 
+dotenv.config({silent: true});
 dotenv.load();
 
 http.globalAgent.maxSockets = Infinity;
@@ -21,6 +22,8 @@ throng(start, { workers: 1, lifetime: Infinity });
 
 function start() {
   logger.log({ type: 'info', message: 'starting server' });
+
+  logger.log({ type: 'info', mongoUri: MONGO_URL});
 
   // I init message-queue in this process so i can destroy user service  if
   // i lost the connection to rabbitmq on a error occur,
