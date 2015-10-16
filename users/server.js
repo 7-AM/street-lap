@@ -14,7 +14,7 @@ dotenv.load();
 http.globalAgent.maxSockets = Infinity;
 
 var RABBIT_URL    = process.env.CLOUDAMQP_URL       || 'amqp://localhost';
-var PORT          = process.env.SERVICE_USER_PORT   || 3000;
+var PORT          = process.env.PORT                || 5000;
 var SERVICE_TIME  = process.env.SERVICE_TIME        || 500;
 var MONGO_URL     = process.env.MONGO_URL           || '';
 
@@ -22,8 +22,6 @@ throng(start, { workers: 1, lifetime: Infinity });
 
 function start() {
   logger.log({ type: 'info', message: 'starting server' });
-
-  logger.log({ type: 'info', mongoUri: MONGO_URL});
 
   // I init message-queue in this process so i can destroy user service  if
   // i lost the connection to rabbitmq on a error occur,
